@@ -1,0 +1,16 @@
+{
+  "extends": "eslint-config-airbnb",
+  "env": {
+    "browser": true,
+    "mocha": true,
+    "node": true
+  },
+  "rules": {
+    "prefer-template": 0,
+    "comma-dangle": 0
+  },
+  "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ]
+}
