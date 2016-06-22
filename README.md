@@ -39,8 +39,8 @@ Also include `codemirror/lib/codemirror.css` style and optionally themes from `c
 
 Name                  | Description
 -------------         | -------------
-`expect`              | Function with `action`, `prevState`, `curState` arguments, which returns a string representing the assertion ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/tree/master/redux/mocha.js)).
-[`wrap`]              | Optional function which gets `expects` argument and returns a string ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/tree/master/redux/mocha.js)).
+`expect`              | Function with `action`, `prevState`, `curState` arguments, which returns a string representing the assertion ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha.js#L1-L3)).
+[`wrap`]              | Optional function which gets `expects` argument and returns a string ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha.js#L5-L14)).
 [`theme`]             | Name of [the codemirror theme](https://codemirror.net/demo/theme.html) as a string.
 
 ### License
