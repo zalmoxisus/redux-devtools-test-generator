@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import CodeMirror from 'react-codemirror';
+import 'codemirror/mode/javascript/javascript';
 
 export default class TestGenerator extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ export default class TestGenerator extends Component {
   }
 
   options = {
+    mode: 'javascript',
     lineNumbers: true
   };
 
