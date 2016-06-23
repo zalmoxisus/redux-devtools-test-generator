@@ -24,9 +24,12 @@ import mochaTemplate from 'redux-devtools-test-generator/lib/redux/mocha'; // If
 
 export default createDevTools(
   <Inspector
-    customTabs={{
-      'Test': <TestGenerator expect={mochaTemplate.expect} wrap={mochaTemplate.wrap} />
-    }}
+    customTabs={[
+     {
+      name: 'Test',
+      component: <TestGenerator expect={mochaTemplate.expect} wrap={mochaTemplate.wrap} />
+     }
+    ]}
   />
 );
 ```
