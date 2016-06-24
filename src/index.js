@@ -86,3 +86,8 @@ TestGenerator.propTypes = {
   theme: PropTypes.string,
   noTestWarning: PropTypes.element
 };
+
+TestGenerator.defaultProps = {
+  selectedActionId: null,
+  startActionId: null
+};
