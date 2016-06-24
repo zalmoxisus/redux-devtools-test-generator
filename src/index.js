@@ -19,7 +19,7 @@ export default class TestGenerator extends Component {
     lineNumbers: true
   };
 
-  get generateTest() {
+  generateTest() {
     const {
       computedStates, actions, selectedActionId, startActionId,
       wrap, expect
@@ -52,9 +52,20 @@ export default class TestGenerator extends Component {
       );
     }
 
+    const code = this.generateTest();
+
+    if (!this.props.useCodemirror) {
+      return (
+        <textarea
+          style={{ padding: '10px', width: '100%', height: '100%' }}
+          defaultValue={code}
+        />
+      );
+    }
+
     return (
       <CodeMirror
-        value={this.generateTest}
+        value={code}
         options={this.options}
       />
     );
@@ -68,6 +79,7 @@ TestGenerator.propTypes = {
   startActionId: PropTypes.number,
   wrap: PropTypes.func,
   expect: PropTypes.func,
+  useCodemirror: PropTypes.bool,
   theme: PropTypes.string,
   noTestWarning: PropTypes.element
 };
