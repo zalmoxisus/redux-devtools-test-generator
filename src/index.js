@@ -24,6 +24,9 @@ export default class TestGenerator extends Component {
       computedStates, actions, selectedActionId, startActionId,
       wrap, expect
     } = this.props;
+
+    if (!actions || !computedStates || computedStates.length === 0) return '';
+
     let r = '';
     let i;
     if (startActionId !== null) i = startActionId;
