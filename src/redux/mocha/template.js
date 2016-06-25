@@ -7,8 +7,8 @@ import reducers from '../../reducers';
 describe('reducers', () => {
   it('should handle actions', () => {
     \${expects}
-  })
-})
+  });
+});
 `);
 
 export default { expect, wrap };
