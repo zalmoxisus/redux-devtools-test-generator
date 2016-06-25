@@ -3,6 +3,12 @@ import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/javascript/javascript';
 
+const style = {
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  height: 'calc(100% - 3.5em)'
+};
+
 export default class TestGenerator extends Component {
   constructor(props) {
     super(props);
@@ -52,29 +58,38 @@ export default class TestGenerator extends Component {
   }
 
   render() {
+    let testComponent;
     if (!this.props.expect) {
-      return (
+      testComponent = (
         this.props.noTestWarning ||
           <div style={{ margin: '10px' }}>No template for tests specified.</div>
       );
+    } else {
+      const code = this.generateTest();
+
+      if (!this.props.useCodemirror) {
+        testComponent = (
+          <textarea
+            style={{ padding: '10px', width: '100%', height: '100%' }}
+            defaultValue={code}
+          />
+        );
+      } else {
+        testComponent = (
+          <CodeMirror
+            value={code}
+            options={this.options}
+          />
+        );
+      }
     }
 
-    const code = this.generateTest();
-
-    if (!this.props.useCodemirror) {
-      return (
-        <textarea
-          style={{ padding: '10px', width: '100%', height: '100%' }}
-          defaultValue={code}
-        />
-      );
-    }
-
+    const { header } = this.props;
     return (
-      <CodeMirror
-        value={code}
-        options={this.options}
-      />
+      <div style={style}>
+        {header}
+        {testComponent}
+      </div>
     );
   }
 }
@@ -94,6 +109,7 @@ TestGenerator.propTypes = {
   ]),
   useCodemirror: PropTypes.bool,
   theme: PropTypes.string,
+  header: PropTypes.element,
   noTestWarning: PropTypes.element
 };
 
