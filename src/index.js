@@ -33,8 +33,8 @@ export default class TestGenerator extends Component {
 
     if (!actions || !computedStates || computedStates.length === 0) return '';
 
-    let { wrap, expect } = this.props;
-    if (typeof expect === 'string') expect = es6template.compile(expect);
+    let { wrap, assertion } = this.props;
+    if (typeof assertion === 'string') assertion = es6template.compile(assertion);
     if (typeof wrap === 'string') wrap = es6template.compile(wrap);
 
     let r = '';
@@ -44,7 +44,7 @@ export default class TestGenerator extends Component {
     else i = computedStates.length - 1;
 
     do {
-      r += expect({
+      r += assertion({
         action: JSON.stringify(actions[i].action),
         prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
         curState: JSON.stringify(computedStates[i].state)
@@ -53,13 +53,13 @@ export default class TestGenerator extends Component {
     } while (i <= selectedActionId);
 
     r = r.trim();
-    if (wrap) r = wrap({ expects: r });
+    if (wrap) r = wrap({ assertions: r });
     return r;
   }
 
   render() {
     let testComponent;
-    if (!this.props.expect) {
+    if (!this.props.assertion) {
       testComponent = (
         this.props.noTestWarning ||
           <div style={{ margin: '10px' }}>No template for tests specified.</div>
@@ -103,7 +103,7 @@ TestGenerator.propTypes = {
     PropTypes.func,
     PropTypes.string
   ]),
-  expect: PropTypes.oneOfType([
+  assertion: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.string
   ]),

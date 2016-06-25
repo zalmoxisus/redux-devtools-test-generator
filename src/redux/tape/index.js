@@ -1,14 +1,14 @@
-export const expect = ({ action, prevState, curState }) => (
+export const assertion = ({ action, prevState, curState }) => (
   `    t.deepEqual(reducers(${prevState}, ${action}).toEqual(${curState}));`
 );
 
-export const wrap = ({ expects }) => (
+export const wrap = ({ assertions }) => (
   `import test from 'tape';
 import reducers from '../../reducers';
 
 test('reducers', (t) => {
-  ${expects}
+  ${assertions}
 });
 `);
 
-export default { expect, wrap };
+export default { assertion, wrap };

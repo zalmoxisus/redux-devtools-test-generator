@@ -17,26 +17,26 @@ const computedStates = [
 ];
 
 function generateTemplate(i, tmp) {
-  let r = tmp.expect({
+  let r = tmp.assertion({
     action: JSON.stringify(actions[i].action),
     prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
     curState: JSON.stringify(computedStates[i].state)
   });
   r = r.trim();
-  r = tmp.wrap({ expects: r });
+  r = tmp.wrap({ assertions: r });
   return r;
 }
 
 describe('TestGenerator component', () => {
   it('should show warning message when no params provided', () => {
     const component = shallow(<TestGenerator />);
-    expect(component.find('div').text()).toMatch(/^No template for tests specified./);
+    expect(component.text()).toMatch(/^No template for tests specified./);
   });
 
   it('should be empty when no actions provided', () => {
     const component = shallow(
       <TestGenerator
-        expect={fnTemplate.expect} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
       />
     );
     expect(component.find('textarea').props().defaultValue).toBe('');
@@ -45,7 +45,7 @@ describe('TestGenerator component', () => {
   it('should match function template\'s test for first action', () => {
     const component = shallow(
       <TestGenerator
-        expect={fnTemplate.expect} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -58,12 +58,12 @@ describe('TestGenerator component', () => {
 
   it('should match string template\'s test for first action', () => {
     const tmp = {
-      expect: es6template.compile(strTemplate.expect),
+      assertion: es6template.compile(strTemplate.assertion),
       wrap: es6template.compile(strTemplate.wrap)
     };
     const component = shallow(
       <TestGenerator
-        expect={fnTemplate.expect} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -77,7 +77,7 @@ describe('TestGenerator component', () => {
   it('should generate test for the last action when selectedActionId not specified', () => {
     const component = shallow(
       <TestGenerator
-        expect={fnTemplate.expect} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates}
       />
     );
