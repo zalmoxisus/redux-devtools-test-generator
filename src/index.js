@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/javascript/javascript';
 
@@ -21,11 +22,14 @@ export default class TestGenerator extends Component {
 
   generateTest() {
     const {
-      computedStates, actions, selectedActionId, startActionId,
-      wrap, expect
+      computedStates, actions, selectedActionId, startActionId
     } = this.props;
 
     if (!actions || !computedStates || computedStates.length === 0) return '';
+
+    let { wrap, expect } = this.props;
+    if (typeof expect === 'string') expect = es6template.compile(expect);
+    if (typeof wrap === 'string') wrap = es6template.compile(wrap);
 
     let r = '';
     let i;
@@ -34,16 +38,16 @@ export default class TestGenerator extends Component {
     else i = computedStates.length - 1;
 
     do {
-      r += expect(
-          JSON.stringify(actions[i].action),
-          i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
-          JSON.stringify(computedStates[i].state)
-        ) + '\n';
+      r += expect({
+        action: JSON.stringify(actions[i].action),
+        prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
+        curState: JSON.stringify(computedStates[i].state)
+      }) + '\n';
       i++;
     } while (i <= selectedActionId);
 
     r = r.trim();
-    if (wrap) r = wrap(r);
+    if (wrap) r = wrap({ expects: r });
     return r;
   }
 
@@ -80,8 +84,14 @@ TestGenerator.propTypes = {
   actions: PropTypes.object,
   selectedActionId: PropTypes.number,
   startActionId: PropTypes.number,
-  wrap: PropTypes.func,
-  expect: PropTypes.func,
+  wrap: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]),
+  expect: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]),
   useCodemirror: PropTypes.bool,
   theme: PropTypes.string,
   noTestWarning: PropTypes.element

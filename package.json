@@ -10,6 +10,7 @@
     "clean": "rimraf lib",
     "build": "babel src --out-dir lib",
     "lint": "eslint src test",
+    "test": "BABEL_ENV=commonjs mocha --compilers js:babel-register --require enzyme/withDom.js --recursive",
     "prepublish": "npm run lint && npm run clean && npm run build"
   },
   "repository": {
@@ -41,16 +42,22 @@
     "babel-preset-es2015-loose": "^7.0.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "enzyme": "^2.3.0",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
+    "expect": "^1.20.1",
+    "mocha": "^2.5.3",
+    "react-addons-test-utils": "^15.1.0",
+    "react-dom": "^15.1.0",
     "rimraf": "^2.5.2",
     "webpack": "^1.13.1"
   },
   "dependencies": {
     "codemirror": "^5.16.0",
+    "es6template": "^1.0.4",
     "react": "^15.1.0",
     "react-codemirror": "^0.2.6"
   }

@@ -1,8 +1,10 @@
 import expect from 'expect';
 import React from 'react';
 import { shallow } from 'enzyme';
+import es6template from 'es6template';
 import TestGenerator from '../src/';
 import fnTemplate from '../src/redux/mocha';
+import strTemplate from '../src/redux/mocha/template';
 
 const actions = {
   0: { type: 'PERFORM_ACTION', action: { type: '@@INIT' } },
@@ -40,7 +42,7 @@ describe('TestGenerator component', () => {
     expect(component.find('textarea').props().defaultValue).toBe('');
   });
 
-  it('should match test for first action', () => {
+  it('should match function template\'s test for first action', () => {
     const component = shallow(
       <TestGenerator
         expect={fnTemplate.expect} wrap={fnTemplate.wrap}
@@ -51,6 +53,24 @@ describe('TestGenerator component', () => {
       component.find('textarea').props().defaultValue
     ).toBe(
       generateTemplate(1, fnTemplate)
+    );
+  });
+
+  it('should match string template\'s test for first action', () => {
+    const tmp = {
+      expect: es6template.compile(strTemplate.expect),
+      wrap: es6template.compile(strTemplate.wrap)
+    };
+    const component = shallow(
+      <TestGenerator
+        expect={fnTemplate.expect} wrap={fnTemplate.wrap}
+        actions={actions} computedStates={computedStates} selectedActionId={1}
+      />
+    );
+    expect(
+      component.find('textarea').props().defaultValue
+    ).toBe(
+      generateTemplate(1, tmp)
     );
   });
 

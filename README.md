@@ -42,8 +42,8 @@ If `useCodemirror` specified, include `codemirror/lib/codemirror.css` style and 
 
 Name                  | Description
 -------------         | -------------
-`expect`              | Function with `action`, `prevState`, `curState` arguments, which returns a string representing the assertion ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha.js#L1-L3)).
-[`wrap`]              | Optional function which gets `expects` argument and returns a string ([see the example](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha.js#L5-L14)).
+`expect`              | String template or function with an object argument containing `action`, `prevState`, `curState` keys, which returns a string representing the assertion (see the [function](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha/index.js#L1-L3) or [template](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha/template.js#L1)).
+[`wrap`]              | Optional string template or function which gets `expects` argument and returns a string (see the example [function](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha/index.js#L5-L14) or [template](https://github.com/zalmoxisus/redux-devtools-test-generator/blob/master/src/redux/mocha/template.js#L3-L12)).
 [`useCodemirror`]     | Boolean. If specified will use codemirror styles.
 [`theme`]             | String. Name of [the codemirror theme](https://codemirror.net/demo/theme.html).
 
