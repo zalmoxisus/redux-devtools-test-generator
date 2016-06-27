@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
-import 'codemirror/mode/javascript/javascript';
 
 const style = {
   display: 'flex',
