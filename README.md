@@ -11,7 +11,9 @@ npm install --save-dev redux-devtools-test-generator
 
 ### Usage
 
-Use with [`redux-devtools`](https://github.com/gaearon/redux-devtools) and [`redux-devtools-inspector`](https://github.com/alexkuz/redux-devtools-inspector) (support for [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension) will come later).
+If you use [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension), [Remote Redux DevTools](https://github.com/zalmoxisus/remote-redux-devtools) or [RemoteDev](https://github.com/zalmoxisus/remotedev), it's already there, and no additional actions required. 
+
+With [`redux-devtools`](https://github.com/gaearon/redux-devtools) and [`redux-devtools-inspector`](https://github.com/alexkuz/redux-devtools-inspector):
 
 ##### `containers/DevTools.js`
 
@@ -22,14 +24,16 @@ import Inspector from 'redux-devtools-inspector';
 import TestGenerator from 'redux-devtools-test-generator';
 import mochaTemplate from 'redux-devtools-test-generator/lib/redux/mocha'; // If using default tests.
 
+const testComponent = (props) => (
+  <TestGenerator
+    expect={mochaTemplate.expect} wrap={mochaTemplate.wrap} useCodemirror
+    {...props}
+  />
+);
+
 export default createDevTools(
   <Inspector
-    customTabs={[
-     {
-      name: 'Test',
-      component: <TestGenerator expect={mochaTemplate.expect} wrap={mochaTemplate.wrap} useCodemirror />
-     }
-    ]}
+    tabs: defaultTabs => [...defaultTabs, { name: 'Test', component: testComponent }]
   />
 );
 ```
