@@ -1,3 +1,5 @@
+export const name = 'Tape template';
+
 export const assertion = ({ action, curState }) => (
   `  ${action}; t.ok(expect(${curState}).toMatch(store)));`
 );
@@ -14,4 +16,4 @@ test('${name}', t => {
 });
 `);
 
-export default { assertion, wrap };
+export default { name, assertion, wrap };

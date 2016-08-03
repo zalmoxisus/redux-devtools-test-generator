@@ -1,3 +1,5 @@
+export const name = 'Mocha template';
+
 export const assertion = ({ action, curState }) => (
   `    ${action}; expect(${curState}).toMatch(store));`
 );
@@ -14,4 +16,4 @@ describe('${name}', () => {
 });
 `);
 
-export default { assertion, wrap };
+export default { name, assertion, wrap };

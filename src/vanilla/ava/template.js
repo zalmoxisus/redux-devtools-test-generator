@@ -1,3 +1,5 @@
+export const name = 'Ava template';
+
 export const assertion = '  ${action}; expect(${curState}).toMatch(store));';
 
 export const wrap = (
@@ -11,4 +13,4 @@ test('\${name}', () => {
 });
 `);
 
-export default { assertion, wrap };
+export default { name, assertion, wrap };
