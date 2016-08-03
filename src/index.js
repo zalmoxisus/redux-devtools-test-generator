@@ -25,12 +25,21 @@ export default class TestGenerator extends Component {
     lineNumbers: true
   };
 
+  getMethod(action) {
+    let type = action.type;
+    if (type[0] === '┗') type = type.substr(1).trim();
+    let args = action.arguments;
+    if (args) args = args.join(',');
+    else args = '';
+    return `${type}(${args})`;
+  }
+
   generateTest() {
     const {
-      computedStates, actions, selectedActionId, startActionId
+      computedStates, actions, selectedActionId, startActionId, isVanilla, name
     } = this.props;
 
-    if (!actions || !computedStates || computedStates.length === 0) return '';
+    if (!actions || !computedStates || computedStates.length < 2) return '';
 
     let { wrap, assertion } = this.props;
     if (typeof assertion === 'string') assertion = es6template.compile(assertion);
@@ -41,18 +50,33 @@ export default class TestGenerator extends Component {
     if (startActionId !== null) i = startActionId;
     else if (selectedActionId !== null) i = selectedActionId;
     else i = computedStates.length - 1;
+    const startIdx = i > 0 ? i : 1;
 
     do {
-      r += assertion({
-        action: JSON.stringify(actions[i].action),
-        prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
-        curState: JSON.stringify(computedStates[i].state)
-      }) + '\n';
+      if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
+        r += assertion({
+          action: !isVanilla ?
+            JSON.stringify(actions[i].action) :
+            this.getMethod(actions[i].action),
+          prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
+          curState: JSON.stringify(computedStates[i].state)
+        }) + '\n';
+      }
       i++;
     } while (i <= selectedActionId);
 
     r = r.trim();
-    if (wrap) r = wrap({ assertions: r });
+    if (wrap) {
+      if (!isVanilla) r = wrap({ name, assertions: r });
+      else {
+        r = wrap({
+          name: /^[a-zA-Z0-9_-]+?$/.test(name) ? name : 'Store',
+          actionName: actions[startIdx].action.type,
+          initialState: JSON.stringify(computedStates[startIdx - 1].state),
+          assertions: r
+        });
+      }
+    }
     return r;
   }
 
@@ -94,6 +118,8 @@ export default class TestGenerator extends Component {
 }
 
 TestGenerator.propTypes = {
+  name: PropTypes.string,
+  isVanilla: PropTypes.bool,
   computedStates: PropTypes.array,
   actions: PropTypes.object,
   selectedActionId: PropTypes.number,

@@ -5,6 +5,8 @@ import es6template from 'es6template';
 import TestGenerator from '../src/';
 import fnTemplate from '../src/redux/mocha';
 import strTemplate from '../src/redux/mocha/template';
+import fnVanillaTemplate from '../src/vanilla/mocha';
+import strVanillaTemplate from '../src/vanilla/mocha/template';
 
 const actions = {
   0: { type: 'PERFORM_ACTION', action: { type: '@@INIT' } },
@@ -24,6 +26,24 @@ function generateTemplate(i, tmp) {
   });
   r = r.trim();
   r = tmp.wrap({ assertions: r });
+  return r;
+}
+
+function generateVanillaTemplate(i, tmp) {
+  let args = actions[i].action.arguments;
+  if (args) args = args.join(',');
+  else args = '';
+  let r = tmp.assertion({
+    action: `${actions[i].action.type}(${args})`,
+    curState: JSON.stringify(computedStates[i].state)
+  });
+  r = r.trim();
+  r = tmp.wrap({
+    name: 'Some name',
+    actionName: actions[i].action.type,
+    initialState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : '',
+    assertions: r
+  });
   return r;
 }
 
@@ -63,7 +83,7 @@ describe('TestGenerator component', () => {
     };
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
+        assertion={strTemplate.assertion} wrap={strTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -85,6 +105,40 @@ describe('TestGenerator component', () => {
       component.find('textarea').props().defaultValue
     ).toBe(
       generateTemplate(computedStates.length - 1, fnTemplate)
+    );
+  });
+
+  it('should generate test for vanilla js class', () => {
+    const component = shallow(
+      <TestGenerator
+        assertion={fnVanillaTemplate.assertion} wrap={fnVanillaTemplate.wrap}
+        actions={actions} computedStates={computedStates} selectedActionId={1}
+        isVanilla name="Some name"
+      />
+    );
+    expect(
+      component.find('textarea').props().defaultValue
+    ).toBe(
+      generateVanillaTemplate(1, fnVanillaTemplate)
+    );
+  });
+
+  it('should generate test for vanilla js class with string template', () => {
+    const tmp = {
+      assertion: es6template.compile(strVanillaTemplate.assertion),
+      wrap: es6template.compile(strVanillaTemplate.wrap)
+    };
+    const component = shallow(
+      <TestGenerator
+        assertion={strVanillaTemplate.assertion} wrap={strVanillaTemplate.wrap}
+        actions={actions} computedStates={computedStates} selectedActionId={1}
+        isVanilla name="Some name"
+      />
+    );
+    expect(
+      component.find('textarea').props().defaultValue
+    ).toBe(
+      generateVanillaTemplate(1, tmp)
     );
   });
 });
