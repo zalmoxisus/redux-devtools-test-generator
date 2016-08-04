@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import stringify from 'javascript-stringify';
 import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
 
@@ -56,10 +57,10 @@ export default class TestGenerator extends Component {
       if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
         r += assertion({
           action: !isVanilla ?
-            JSON.stringify(actions[i].action) :
+            stringify(actions[i].action) :
             this.getMethod(actions[i].action),
-          prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
-          curState: JSON.stringify(computedStates[i].state)
+          prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined,
+          curState: stringify(computedStates[i].state)
         }) + '\n';
       }
       i++;
@@ -72,7 +73,7 @@ export default class TestGenerator extends Component {
         r = wrap({
           name: /^[a-zA-Z0-9_-]+?$/.test(name) ? name : 'Store',
           actionName: actions[startIdx].action.type,
-          initialState: JSON.stringify(computedStates[startIdx - 1].state),
+          initialState: stringify(computedStates[startIdx - 1].state),
           assertions: r
         });
       }

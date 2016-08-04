@@ -1,5 +1,6 @@
 import expect from 'expect';
 import React from 'react';
+import stringify from 'javascript-stringify';
 import { shallow } from 'enzyme';
 import es6template from 'es6template';
 import TestGenerator from '../src/';
@@ -20,9 +21,9 @@ const computedStates = [
 
 function generateTemplate(i, tmp) {
   let r = tmp.assertion({
-    action: JSON.stringify(actions[i].action),
-    prevState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : undefined,
-    curState: JSON.stringify(computedStates[i].state)
+    action: stringify(actions[i].action),
+    prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined,
+    curState: stringify(computedStates[i].state)
   });
   r = r.trim();
   r = tmp.wrap({ assertions: r });
@@ -35,13 +36,13 @@ function generateVanillaTemplate(i, tmp) {
   else args = '';
   let r = tmp.assertion({
     action: `${actions[i].action.type}(${args})`,
-    curState: JSON.stringify(computedStates[i].state)
+    curState: stringify(computedStates[i].state)
   });
   r = r.trim();
   r = tmp.wrap({
-    name: 'Some name',
+    name: 'SomeStore',
     actionName: actions[i].action.type,
-    initialState: i > 0 ? JSON.stringify(computedStates[i - 1].state) : '',
+    initialState: i > 0 ? stringify(computedStates[i - 1].state) : '',
     assertions: r
   });
   return r;
@@ -113,7 +114,7 @@ describe('TestGenerator component', () => {
       <TestGenerator
         assertion={fnVanillaTemplate.assertion} wrap={fnVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
-        isVanilla name="Some name"
+        isVanilla name="SomeStore"
       />
     );
     expect(
@@ -132,7 +133,7 @@ describe('TestGenerator component', () => {
       <TestGenerator
         assertion={strVanillaTemplate.assertion} wrap={strVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
-        isVanilla name="Some name"
+        isVanilla name="SomeStore"
       />
     );
     expect(

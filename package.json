@@ -58,6 +58,7 @@
   "dependencies": {
     "codemirror": "^5.16.0",
     "es6template": "^1.0.4",
+    "javascript-stringify": "^1.1.1",
     "react": "^15.1.0",
     "react-codemirror": "^0.2.6"
   }
