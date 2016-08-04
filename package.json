@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-test-generator",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Generate tests for redux devtools.",
   "main": "lib/index.js",
   "files": [
@@ -42,6 +42,7 @@
     "babel-preset-es2015-loose": "^7.0.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.11.6",
     "enzyme": "^2.3.0",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",

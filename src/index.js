@@ -21,11 +21,6 @@ export default class TestGenerator extends Component {
     }
   }
 
-  options = {
-    mode: 'javascript',
-    lineNumbers: true
-  };
-
   getMethod(action) {
     let type = action.type;
     if (type[0] === '┗') type = type.substr(1).trim();
@@ -34,6 +29,11 @@ export default class TestGenerator extends Component {
     else args = '';
     return `${type}(${args})`;
   }
+
+  options = {
+    mode: 'javascript',
+    lineNumbers: true
+  };
 
   generateTest() {
     const {
