@@ -82,8 +82,9 @@ export default class TestGenerator extends Component {
 
   render() {
     let testComponent;
+    let warning;
     if (!this.props.assertion) {
-      testComponent = (
+      warning = (
         this.props.noTestWarning ||
           <div style={{ margin: '10px' }}>No template for tests specified.</div>
       );
@@ -105,6 +106,13 @@ export default class TestGenerator extends Component {
           />
         );
       }
+      if (this.props.startActionId === null) {
+        warning = (
+          <div
+            style={{ padding: '10px', backgroundColor: '#247b98' }}
+          >Hold <b>SHIFT</b> key to select more actions.</div>
+        );
+      }
     }
 
     const { header } = this.props;
@@ -112,6 +120,7 @@ export default class TestGenerator extends Component {
       <div style={style}>
         {header}
         {testComponent}
+        {warning}
       </div>
     );
   }
