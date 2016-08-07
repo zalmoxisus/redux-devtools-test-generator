@@ -72,7 +72,7 @@ export default class TestGenerator extends Component {
       else {
         r = wrap({
           name: /^[a-zA-Z0-9_-]+?$/.test(name) ? name : 'Store',
-          actionName: actions[startIdx].action.type,
+          actionName: actions[startIdx].action.type.replace(/[^a-zA-Z0-9_-]+/, ''),
           initialState: stringify(computedStates[startIdx - 1].state),
           assertions: r
         });
