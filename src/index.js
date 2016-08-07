@@ -25,7 +25,7 @@ export default class TestGenerator extends Component {
     let type = action.type;
     if (type[0] === '┗') type = type.substr(1).trim();
     let args = action.arguments;
-    if (args) args = args.join(',');
+    if (args) args = args.map(arg => stringify(arg)).join(',');
     else args = '';
     return `${type}(${args})`;
   }
