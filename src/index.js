@@ -76,12 +76,20 @@ export default class TestGenerator extends Component {
 
     if (!actions || !computedStates || computedStates.length < 2) return '';
 
-    let { wrap, assertion, action } = this.props;
+    let { wrap, assertion, action, indentation } = this.props;
     if (typeof assertion === 'string') assertion = es6template.compile(assertion);
-    if (typeof wrap === 'string') wrap = es6template.compile(wrap);
+    if (typeof wrap === 'string') {
+      const ident = wrap.match(/\n.+\$\{assertions}/);
+      if (ident) indentation = ident[0].length - 13;
+      wrap = es6template.compile(wrap);
+    }
     if (typeof action === 'string') action = es6template.compile(action);
 
+    let space = '';
+    if (indentation) space = Array(indentation).join(' ');
+
     let r = '';
+    let isFirst = true;
     let i;
     if (startActionId !== null) i = startActionId;
     else if (selectedActionId !== null) i = selectedActionId;
@@ -89,23 +97,24 @@ export default class TestGenerator extends Component {
     const startIdx = i > 0 ? i : 1;
 
     const addAssertions = ({ path, curState }) => {
-      r += assertion({ path, curState }) + '\n';
+      r += space + assertion({ path, curState }) + '\n';
     };
 
     do {
       if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
+        if (isFirst) isFirst = false;
+        else r += space;
         r += action({
           action: !isVanilla ?
             stringify(actions[i].action) :
             this.getMethod(actions[i].action),
           prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
-        });
+        }) + '\n';
         compare(computedStates[i - 1], computedStates[i], addAssertions);
       }
       i++;
     } while (i <= selectedActionId);
 
-    r = r.trim();
     if (wrap) {
       if (!isVanilla) r = wrap({ name, assertions: r });
       else {
@@ -185,6 +194,7 @@ TestGenerator.propTypes = {
     PropTypes.func,
     PropTypes.string
   ]),
+  indentation: PropTypes.number,
   useCodemirror: PropTypes.bool,
   theme: PropTypes.string,
   header: PropTypes.element,
