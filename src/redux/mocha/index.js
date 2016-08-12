@@ -1,7 +1,11 @@
 export const name = 'Mocha template';
 
-export const assertion = ({ action, prevState, curState }) => (
-  `    expect(reducers(${prevState}, ${action}).toEqual(${curState}));`
+export const action = ({ action, prevState }) => (
+  `state = reducers(${prevState}, ${action});`
+);
+
+export const assertion = ({ path, curState }) => (
+  `expect(state${path}).toEqual(${curState});`
 );
 
 export const wrap = ({ assertions }) => (
@@ -10,9 +14,10 @@ import reducers from '../../reducers';
 
 describe('reducers', () => {
   it('should handle actions', () => {
+    let state;
     ${assertions}
   });
 });
 `);
 
-export default { name, assertion, wrap };
+export default { name, assertion, action, wrap };

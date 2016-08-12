@@ -1,7 +1,11 @@
 export const name = 'Tape template';
 
-export const assertion = ({ action, prevState, curState }) => (
-  `    t.deepEqual(reducers(${prevState}, ${action}).toEqual(${curState}));`
+export const action = ({ action, prevState }) => (
+  `state = reducers(${prevState}, ${action});`
+);
+
+export const assertion = ({ path, curState }) => (
+  `t.deepEqual(state${path}, ${curState});`
 );
 
 export const wrap = ({ assertions }) => (
@@ -9,9 +13,10 @@ export const wrap = ({ assertions }) => (
 import reducers from '../../reducers';
 
 test('reducers', (t) => {
+  let state;
   ${assertions}
   t.end();
 });
 `);
 
-export default { name, assertion, wrap };
+export default { name, assertion, action, wrap };

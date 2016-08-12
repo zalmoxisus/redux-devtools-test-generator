@@ -1,16 +1,21 @@
 export const name = 'Ava template';
 
-export const assertion = ({ action, prevState, curState }) => (
-  `  t.deepEqual(reducers(${prevState}, ${action}), ${curState});`
+export const action = ({ action, prevState }) => (
+  `state = reducers(${prevState}, ${action});`
+);
+
+export const assertion = ({ path, curState }) => (
+  `t.deepEqual(state${path}, ${curState});`
 );
 
 export const wrap = ({ assertions }) => (
   `import test from 'ava';
 import reducers from '../../reducers';
 
-test('reducers', t => {
+test('reducers', (t) => {
+  let state;
   ${assertions}
 });
 `);
 
-export default { name, assertion, wrap };
+export default { name, assertion, action, wrap };

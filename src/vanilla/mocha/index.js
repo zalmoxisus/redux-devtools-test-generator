@@ -1,7 +1,11 @@
 export const name = 'Mocha template';
 
-export const assertion = ({ action, curState }) => (
-  `    ${action}; expect(${curState}).toMatch(store));`
+export const action = ({ action }) => (
+  `${action};`
+);
+
+export const assertion = ({ path, curState }) => (
+  `expect(store${path}).toEqual(${curState});`
 );
 
 export const wrap = ({ name, actionName, initialState, assertions }) => (
@@ -10,10 +14,10 @@ import ${name} from '../../stores/${name}';
 
 describe('${name}', () => {
   it('${actionName}', () => {
-    const store = new ${name}(${initialState}); 
+    const store = new ${name}(${initialState});
     ${assertions}
   });
 });
 `);
 
-export default { name, assertion, wrap };
+export default { name, assertion, action, wrap };
