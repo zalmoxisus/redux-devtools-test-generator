@@ -3,7 +3,7 @@ import React from 'react';
 import stringify from 'javascript-stringify';
 import { shallow } from 'enzyme';
 import es6template from 'es6template';
-import TestGenerator from '../src/';
+import TestGenerator, { compare } from '../src/';
 import fnTemplate from '../src/redux/mocha';
 import strTemplate from '../src/redux/mocha/template';
 import fnVanillaTemplate from '../src/vanilla/mocha';
@@ -20,12 +20,13 @@ const computedStates = [
 ];
 
 function generateTemplate(i, tmp) {
-  let r = tmp.assertion({
+  let r = tmp.action({
     action: stringify(actions[i].action),
-    prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined,
-    curState: stringify(computedStates[i].state)
+    prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
+  }) + '\n';
+  compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
+    r += tmp.assertion({ path, curState }) + '\n';
   });
-  r = r.trim();
   r = tmp.wrap({ assertions: r });
   return r;
 }
@@ -34,11 +35,12 @@ function generateVanillaTemplate(i, tmp) {
   let args = actions[i].action.arguments;
   if (args) args = args.join(',');
   else args = '';
-  let r = tmp.assertion({
-    action: `${actions[i].action.type}(${args})`,
-    curState: stringify(computedStates[i].state)
+  let r = tmp.action({
+    action: `${actions[i].action.type}(${args})`
+  }) + '\n';
+  compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
+    r += tmp.assertion({ path, curState }) + '\n';
   });
-  r = r.trim();
   r = tmp.wrap({
     name: 'SomeStore',
     actionName: actions[i].action.type,
@@ -57,7 +59,7 @@ describe('TestGenerator component', () => {
   it('should be empty when no actions provided', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
       />
     );
     expect(component.find('textarea').props().defaultValue).toBe('');
@@ -66,7 +68,7 @@ describe('TestGenerator component', () => {
   it('should match function template\'s test for first action', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -79,12 +81,13 @@ describe('TestGenerator component', () => {
 
   it('should match string template\'s test for first action', () => {
     const tmp = {
-      assertion: es6template.compile(strTemplate.assertion),
+      assertion: es6template.compile('    ' + strTemplate.assertion),
+      action: es6template.compile(strTemplate.action),
       wrap: es6template.compile(strTemplate.wrap)
     };
     const component = shallow(
       <TestGenerator
-        assertion={strTemplate.assertion} wrap={strTemplate.wrap}
+        assertion={strTemplate.assertion} action={strTemplate.action} wrap={strTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -98,7 +101,7 @@ describe('TestGenerator component', () => {
   it('should generate test for the last action when selectedActionId not specified', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates}
       />
     );
@@ -112,7 +115,8 @@ describe('TestGenerator component', () => {
   it('should generate test for vanilla js class', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnVanillaTemplate.assertion} wrap={fnVanillaTemplate.wrap}
+        assertion={fnVanillaTemplate.assertion} action={fnVanillaTemplate.action}
+        wrap={fnVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
         isVanilla name="SomeStore"
       />
@@ -126,12 +130,14 @@ describe('TestGenerator component', () => {
 
   it('should generate test for vanilla js class with string template', () => {
     const tmp = {
-      assertion: es6template.compile(strVanillaTemplate.assertion),
+      assertion: es6template.compile('    ' + strVanillaTemplate.assertion),
+      action: es6template.compile(strVanillaTemplate.action),
       wrap: es6template.compile(strVanillaTemplate.wrap)
     };
     const component = shallow(
       <TestGenerator
-        assertion={strVanillaTemplate.assertion} wrap={strVanillaTemplate.wrap}
+        assertion={strVanillaTemplate.assertion} action={strVanillaTemplate.action}
+        wrap={strVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
         isVanilla name="SomeStore"
       />
