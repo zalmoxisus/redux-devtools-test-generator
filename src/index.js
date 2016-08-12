@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import stringify from 'javascript-stringify';
+import objectPath from 'object-path';
+import fclone from 'fclone';
+import diff from 'simple-diff';
 import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
 
@@ -8,6 +11,37 @@ const style = {
   flexFlow: 'column nowrap',
   height: 'calc(100% - 3.5em)'
 };
+
+export const fromPath = (path) => (
+  path
+    .slice(1)
+    .map(a => (
+      typeof a === 'string' ? `.${a}` : `[${a}]`
+    ))
+    .join('')
+);
+
+export function compare(s1, s2, cb) {
+  const paths = []; // Already processed
+  diff(fclone(s1), fclone(s2), { idProp: '*' })
+    .forEach(({ type, newPath, newValue }) => {
+      let curState;
+      let path = fromPath(newPath);
+      if (paths.length && paths.indexOf(path) !== -1) return;
+
+      if (type === 'remove-item' || type === 'add-item' || type === 'move-item') {
+        paths.push(path);
+        const v = objectPath.get(s2, newPath);
+        curState = v.length;
+        path += '.length';
+      } else {
+        curState = stringify(newValue);
+      }
+
+      // console.log(`expect(store${path}).toEqual(${curState});`);
+      cb({ path, curState });
+    });
+}
 
 export default class TestGenerator extends Component {
   constructor(props) {
@@ -42,9 +76,10 @@ export default class TestGenerator extends Component {
 
     if (!actions || !computedStates || computedStates.length < 2) return '';
 
-    let { wrap, assertion } = this.props;
+    let { wrap, assertion, action } = this.props;
     if (typeof assertion === 'string') assertion = es6template.compile(assertion);
     if (typeof wrap === 'string') wrap = es6template.compile(wrap);
+    if (typeof action === 'string') action = es6template.compile(action);
 
     let r = '';
     let i;
@@ -53,15 +88,19 @@ export default class TestGenerator extends Component {
     else i = computedStates.length - 1;
     const startIdx = i > 0 ? i : 1;
 
+    const addAssertions = ({ path, curState }) => {
+      r += assertion({ path, curState }) + '\n';
+    };
+
     do {
       if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
-        r += assertion({
+        r += action({
           action: !isVanilla ?
             stringify(actions[i].action) :
             this.getMethod(actions[i].action),
-          prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined,
-          curState: stringify(computedStates[i].state)
-        }) + '\n';
+          prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
+        });
+        compare(computedStates[i - 1], computedStates[i], addAssertions);
       }
       i++;
     } while (i <= selectedActionId);
@@ -135,6 +174,10 @@ TestGenerator.propTypes = {
   selectedActionId: PropTypes.number,
   startActionId: PropTypes.number,
   wrap: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]),
+  action: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.string
   ]),
