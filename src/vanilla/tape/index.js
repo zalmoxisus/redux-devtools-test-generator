@@ -1,6 +1,6 @@
 export const name = 'Tape template';
 
-export const action = ({ action }) => (
+export const dispatcher = ({ action }) => (
   `${action};`
 );
 
@@ -19,4 +19,4 @@ test('${name}', (t) => {
 });
 `);
 
-export default { name, assertion, action, wrap };
+export default { name, assertion, dispatcher, wrap };

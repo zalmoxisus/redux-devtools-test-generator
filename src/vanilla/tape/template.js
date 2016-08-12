@@ -1,6 +1,6 @@
 export const name = 'Tape template';
 
-export const action = '${action};';
+export const dispatcher = '${action};';
 
 export const assertion = 't.deepEqual(state${path}, ${curState});';
 
@@ -15,4 +15,4 @@ test('\${name}', (t) => {
 });
 `);
 
-export default { name, assertion, action, wrap };
+export default { name, assertion, dispatcher, wrap };

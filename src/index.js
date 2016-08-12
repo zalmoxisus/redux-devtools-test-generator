@@ -76,14 +76,14 @@ export default class TestGenerator extends Component {
 
     if (!actions || !computedStates || computedStates.length < 2) return '';
 
-    let { wrap, assertion, action, indentation } = this.props;
+    let { wrap, assertion, dispatcher, indentation } = this.props;
     if (typeof assertion === 'string') assertion = es6template.compile(assertion);
     if (typeof wrap === 'string') {
       const ident = wrap.match(/\n.+\$\{assertions}/);
       if (ident) indentation = ident[0].length - 13;
       wrap = es6template.compile(wrap);
     }
-    if (typeof action === 'string') action = es6template.compile(action);
+    if (typeof dispatcher === 'string') dispatcher = es6template.compile(dispatcher);
 
     let space = '';
     if (indentation) space = Array(indentation).join(' ');
@@ -104,7 +104,7 @@ export default class TestGenerator extends Component {
       if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
         if (isFirst) isFirst = false;
         else r += space;
-        r += action({
+        r += dispatcher({
           action: !isVanilla ?
             stringify(actions[i].action) :
             this.getMethod(actions[i].action),
@@ -186,7 +186,7 @@ TestGenerator.propTypes = {
     PropTypes.func,
     PropTypes.string
   ]),
-  action: PropTypes.oneOfType([
+  dispatcher: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.string
   ]),

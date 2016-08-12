@@ -1,6 +1,6 @@
 export const name = 'Mocha template';
 
-export const action = '${action};';
+export const dispatcher = '${action};';
 
 export const assertion = 'expect(store${path}).toEqual(${curState});';
 
@@ -16,4 +16,4 @@ describe('\${name}', () => {
 });
 `);
 
-export default { name, assertion, action, wrap };
+export default { name, assertion, dispatcher, wrap };

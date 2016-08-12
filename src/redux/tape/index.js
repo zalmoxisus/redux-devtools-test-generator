@@ -1,6 +1,6 @@
 export const name = 'Tape template';
 
-export const action = ({ action, prevState }) => (
+export const dispatcher = ({ action, prevState }) => (
   `state = reducers(${prevState}, ${action});`
 );
 
@@ -19,4 +19,4 @@ test('reducers', (t) => {
 });
 `);
 
-export default { name, assertion, action, wrap };
+export default { name, assertion, dispatcher, wrap };

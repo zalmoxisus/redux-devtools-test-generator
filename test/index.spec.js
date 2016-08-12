@@ -20,7 +20,7 @@ const computedStates = [
 ];
 
 function generateTemplate(i, tmp) {
-  let r = tmp.action({
+  let r = tmp.dispatcher({
     action: stringify(actions[i].action),
     prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
   }) + '\n';
@@ -35,7 +35,7 @@ function generateVanillaTemplate(i, tmp) {
   let args = actions[i].action.arguments;
   if (args) args = args.join(',');
   else args = '';
-  let r = tmp.action({
+  let r = tmp.dispatcher({
     action: `${actions[i].action.type}(${args})`
   }) + '\n';
   compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
@@ -59,7 +59,7 @@ describe('TestGenerator component', () => {
   it('should be empty when no actions provided', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
       />
     );
     expect(component.find('textarea').props().defaultValue).toBe('');
@@ -68,7 +68,7 @@ describe('TestGenerator component', () => {
   it('should match function template\'s test for first action', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -82,12 +82,13 @@ describe('TestGenerator component', () => {
   it('should match string template\'s test for first action', () => {
     const tmp = {
       assertion: es6template.compile('    ' + strTemplate.assertion),
-      action: es6template.compile(strTemplate.action),
+      dispatcher: es6template.compile(strTemplate.dispatcher),
       wrap: es6template.compile(strTemplate.wrap)
     };
     const component = shallow(
       <TestGenerator
-        assertion={strTemplate.assertion} action={strTemplate.action} wrap={strTemplate.wrap}
+        assertion={strTemplate.assertion} dispatcher={strTemplate.dispatcher}
+        wrap={strTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -101,7 +102,7 @@ describe('TestGenerator component', () => {
   it('should generate test for the last action when selectedActionId not specified', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnTemplate.assertion} action={fnTemplate.action} wrap={fnTemplate.wrap}
+        assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates}
       />
     );
@@ -115,7 +116,7 @@ describe('TestGenerator component', () => {
   it('should generate test for vanilla js class', () => {
     const component = shallow(
       <TestGenerator
-        assertion={fnVanillaTemplate.assertion} action={fnVanillaTemplate.action}
+        assertion={fnVanillaTemplate.assertion} dispatcher={fnVanillaTemplate.dispatcher}
         wrap={fnVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
         isVanilla name="SomeStore"
@@ -131,12 +132,12 @@ describe('TestGenerator component', () => {
   it('should generate test for vanilla js class with string template', () => {
     const tmp = {
       assertion: es6template.compile('    ' + strVanillaTemplate.assertion),
-      action: es6template.compile(strVanillaTemplate.action),
+      dispatcher: es6template.compile(strVanillaTemplate.dispatcher),
       wrap: es6template.compile(strVanillaTemplate.wrap)
     };
     const component = shallow(
       <TestGenerator
-        assertion={strVanillaTemplate.assertion} action={strVanillaTemplate.action}
+        assertion={strVanillaTemplate.assertion} dispatcher={strVanillaTemplate.dispatcher}
         wrap={strVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
         isVanilla name="SomeStore"
