@@ -27,6 +27,7 @@ function generateTemplate(i, tmp) {
   compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
     r += tmp.assertion({ path, curState }) + '\n';
   });
+  r = r.trim();
   r = tmp.wrap({ assertions: r });
   return r;
 }
@@ -41,6 +42,7 @@ function generateVanillaTemplate(i, tmp) {
   compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
     r += tmp.assertion({ path, curState }) + '\n';
   });
+  r = r.trim();
   r = tmp.wrap({
     name: 'SomeStore',
     actionName: actions[i].action.type,

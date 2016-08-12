@@ -115,6 +115,7 @@ export default class TestGenerator extends Component {
       i++;
     } while (i <= selectedActionId);
 
+    r = r.trim();
     if (wrap) {
       if (!isVanilla) r = wrap({ name, assertions: r });
       else {
