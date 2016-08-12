@@ -29,11 +29,14 @@ export function compare(s1, s2, cb) {
       let path = fromPath(newPath);
       if (paths.length && paths.indexOf(path) !== -1) return;
 
-      if (type === 'remove-item' || type === 'add-item' || type === 'move-item') {
+      if (type === 'remove-item' || type === 'move-item') {
         paths.push(path);
         const v = objectPath.get(s2, newPath);
         curState = v.length;
         path += '.length';
+      } else if (type === 'add-item') {
+        path += `[${newIndex}]`;
+        curState = stringify(newValue);
       } else {
         curState = stringify(newValue);
       }
