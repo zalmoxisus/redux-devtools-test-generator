@@ -27,27 +27,30 @@ function getState(s, defaultValue) {
 
 export function compare(s1, s2, cb, defaultValue) {
   const paths = []; // Already processed
-  diff(getState(s1, defaultValue), getState(s2, defaultValue) /* , { idProp: '*' }*/)
-    .forEach(({ type, newPath, newValue, newIndex }) => {
-      let curState;
-      let path = fromPath(newPath);
+  function generate({ type, newPath, newValue, newIndex }) {
+    let curState;
+    let path = fromPath(newPath);
+
+    if (type === 'remove-item' || type === 'move-item') {
       if (paths.length && paths.indexOf(path) !== -1) return;
+      paths.push(path);
+      const v = objectPath.get(s2.state, newPath);
+      curState = v.length;
+      path += '.length';
+    } else if (type === 'add-item') {
+      generate({ type: 'move-item', newPath });
+      path += `[${newIndex}]`;
+      curState = stringify(newValue);
+    } else {
+      curState = stringify(newValue);
+    }
 
-      if (type === 'remove-item' || type === 'move-item') {
-        paths.push(path);
-        const v = objectPath.get(s2.state, newPath);
-        curState = v.length;
-        path += '.length';
-      } else if (type === 'add-item') {
-        path += `[${newIndex}]`;
-        curState = stringify(newValue);
-      } else {
-        curState = stringify(newValue);
-      }
+    // console.log(`expect(store${path}).toEqual(${curState});`);
+    cb({ path, curState });
+  }
 
-      // console.log(`expect(store${path}).toEqual(${curState});`);
-      cb({ path, curState });
-    });
+  diff(getState(s1, defaultValue), getState(s2, defaultValue)/* , { idProp: '*' } */)
+    .forEach(generate);
 }
 
 export default class TestGenerator extends Component {
