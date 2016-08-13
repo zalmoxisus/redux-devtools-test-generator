@@ -21,6 +21,13 @@ const test = (s1, s2) => compare(s1, s2,
 );
 
 describe('Assertions', () => {
+  it('should return initial state', () => {
+    test(
+      undefined,
+      computedStates[0]
+    );
+  });
+
   it('should add element', () => {
     test(
       computedStates[0],

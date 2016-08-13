@@ -14,24 +14,28 @@ const style = {
 
 export const fromPath = (path) => (
   path
-    .slice(1)
     .map(a => (
       typeof a === 'string' ? `.${a}` : `[${a}]`
     ))
     .join('')
 );
 
-export function compare(s1, s2, cb) {
+function getState(s, defaultValue) {
+  if (!s) return defaultValue;
+  return fclone(s.state);
+}
+
+export function compare(s1, s2, cb, defaultValue) {
   const paths = []; // Already processed
-  diff(fclone(s1), fclone(s2), { idProp: '*' })
-    .forEach(({ type, newPath, newValue }) => {
+  diff(getState(s1, defaultValue), getState(s2, defaultValue) /* , { idProp: '*' }*/)
+    .forEach(({ type, newPath, newValue, newIndex }) => {
       let curState;
       let path = fromPath(newPath);
       if (paths.length && paths.indexOf(path) !== -1) return;
 
       if (type === 'remove-item' || type === 'move-item') {
         paths.push(path);
-        const v = objectPath.get(s2, newPath);
+        const v = objectPath.get(s2.state, newPath);
         curState = v.length;
         path += '.length';
       } else if (type === 'add-item') {
@@ -67,6 +71,11 @@ export default class TestGenerator extends Component {
     return `${type}(${args})`;
   }
 
+  getAction(action) {
+    if (action.type === '@@INIT') return '{}';
+    return stringify(action);
+  }
+
   options = {
     mode: 'javascript',
     lineNumbers: true
@@ -77,7 +86,7 @@ export default class TestGenerator extends Component {
       computedStates, actions, selectedActionId, startActionId, isVanilla, name
     } = this.props;
 
-    if (!actions || !computedStates || computedStates.length < 2) return '';
+    if (!actions || !computedStates || computedStates.length < 1) return '';
 
     let { wrap, assertion, dispatcher, indentation } = this.props;
     if (typeof assertion === 'string') assertion = es6template.compile(assertion);
@@ -103,20 +112,23 @@ export default class TestGenerator extends Component {
       r += space + assertion({ path, curState }) + '\n';
     };
 
-    do {
-      if (!isVanilla || /^┗?\s?[a-zA-Z0-9_.\[\]-]+?$/.test(actions[i].action.type)) {
+    while (actions[i]) {
+      if (!isVanilla || /^┗?\s?[a-zA-Z0-9_@.\[\]-]+?$/.test(actions[i].action.type)) {
         if (isFirst) isFirst = false;
         else r += space;
-        r += dispatcher({
-          action: !isVanilla ?
-            stringify(actions[i].action) :
-            this.getMethod(actions[i].action),
-          prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
-        }) + '\n';
-        compare(computedStates[i - 1], computedStates[i], addAssertions);
+        if (!isVanilla || actions[i].action.type[0] !== '@') {
+          r += dispatcher({
+            action: !isVanilla ?
+              this.getAction(actions[i].action) :
+              this.getMethod(actions[i].action),
+            prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
+          }) + '\n';
+        }
+        compare(computedStates[i - 1], computedStates[i], addAssertions, isVanilla && {});
       }
       i++;
-    } while (i <= selectedActionId);
+      if (i > selectedActionId) break;
+    }
 
     r = r.trim();
     if (wrap) {
@@ -124,7 +136,9 @@ export default class TestGenerator extends Component {
       else {
         r = wrap({
           name: /^[a-zA-Z0-9_-]+?$/.test(name) ? name : 'Store',
-          actionName: actions[startIdx].action.type.replace(/[^a-zA-Z0-9_-]+/, ''),
+          actionName: (selectedActionId === null || selectedActionId > 0) && actions[startIdx] ?
+            actions[startIdx].action.type.replace(/[^a-zA-Z0-9_-]+/, '') :
+            'should return the initial state',
           initialState: stringify(computedStates[startIdx - 1].state),
           assertions: r
         });
