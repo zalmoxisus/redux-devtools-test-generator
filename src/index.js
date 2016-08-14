@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import stringify from 'javascript-stringify';
 import objectPath from 'object-path';
-import fclone from 'fclone';
+import jsan from 'jsan';
 import diff from 'simple-diff';
 import es6template from 'es6template';
 import CodeMirror from 'react-codemirror';
@@ -22,7 +22,7 @@ export const fromPath = (path) => (
 
 function getState(s, defaultValue) {
   if (!s) return defaultValue;
-  return fclone(s.state);
+  return JSON.parse(jsan.stringify(s.state));
 }
 
 export function compare(s1, s2, cb, defaultValue) {
