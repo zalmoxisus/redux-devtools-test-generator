@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-test-generator",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Generate tests for redux devtools.",
   "main": "lib/index.js",
   "files": [
@@ -11,7 +11,7 @@
     "build": "babel src --out-dir lib",
     "lint": "eslint src test",
     "test": "BABEL_ENV=commonjs mocha --compilers js:babel-register --require enzyme/withDom.js --recursive",
-    "prepublish": "npm run lint && npm run clean && npm run build"
+    "prepublish": "npm run lint && npm run test && npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
