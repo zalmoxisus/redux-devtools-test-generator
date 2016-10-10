@@ -11,11 +11,9 @@ export const assertion = ({ curState }) => (
 export const wrap = ({ assertions }) => (
   `import reducers from '../../reducers';
 
-describe('reducers', () => {
-  it('should handle actions', () => {
-    let state;
-    ${assertions}
-  });
+test('reducers', () => {
+  let state;
+  ${assertions}
 });
 `);
 

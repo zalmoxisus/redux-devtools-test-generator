@@ -7,11 +7,9 @@ export const assertion = 'expect(state).toEqual(${curState});';
 export const wrap = (
   `import reducers from '../../reducers';
 
-describe('reducers', () => {
-  it('should handle actions', () => {
-    let state;
-    \${assertions}
-  });
+test('reducers', () => {
+  let state;
+  \${assertions}
 });
 `);
 
