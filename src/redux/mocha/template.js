@@ -2,7 +2,7 @@ export const name = 'Mocha template';
 
 export const dispatcher = 'state = reducers(${prevState}, ${action});';
 
-export const assertion = 'expect(state${path}).toEqual(${curState});';
+export const assertion = 'expect(state).toEqual(${curState});';
 
 export const wrap = (
   `import expect from 'expect';

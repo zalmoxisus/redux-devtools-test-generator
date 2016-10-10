@@ -4,8 +4,8 @@ export const dispatcher = ({ action, prevState }) => (
   `state = reducers(${prevState}, ${action});`
 );
 
-export const assertion = ({ path, curState }) => (
-  `expect(state${path}).toEqual(${curState});`
+export const assertion = ({ curState }) => (
+  `expect(state).toEqual(${curState});`
 );
 
 export const wrap = ({ assertions }) => (

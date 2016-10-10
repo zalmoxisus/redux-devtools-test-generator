@@ -2,7 +2,7 @@ export const name = 'Tape template';
 
 export const dispatcher = 'state = reducers(${prevState}, ${action});';
 
-export const assertion = 't.deepEqual(state${path}, ${curState});';
+export const assertion = 't.deepEqual(state, ${curState});';
 
 export const wrap = (
   `import test from 'tape';

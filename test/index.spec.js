@@ -24,9 +24,12 @@ function generateTemplate(i, tmp) {
     action: stringify(actions[i].action),
     prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
   }) + '\n';
+  /*
   compare(computedStates[i - 1], computedStates[i], ({ path, curState }) => {
     r += tmp.assertion({ path, curState }) + '\n';
   });
+  */
+  r += tmp.assertion({ path: '', curState: stringify(computedStates[i].state) }) + '\n';
   r = r.trim();
   r = tmp.wrap({ assertions: r });
   return r;

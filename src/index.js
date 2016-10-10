@@ -127,7 +127,11 @@ export default class TestGenerator extends Component {
             prevState: i > 0 ? stringify(computedStates[i - 1].state) : undefined
           }) + '\n';
         }
-        compare(computedStates[i - 1], computedStates[i], addAssertions, isVanilla && {});
+        if (!isVanilla) {
+          addAssertions({ path: '', curState: stringify(computedStates[i].state) });
+        } else {
+          compare(computedStates[i - 1], computedStates[i], addAssertions, isVanilla && {});
+        }
       }
       i++;
       if (i > selectedActionId) break;

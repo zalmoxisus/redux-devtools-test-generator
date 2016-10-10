@@ -4,8 +4,8 @@ export const dispatcher = ({ action, prevState }) => (
   `state = reducers(${prevState}, ${action});`
 );
 
-export const assertion = ({ path, curState }) => (
-  `t.deepEqual(state${path}, ${curState});`
+export const assertion = ({ curState }) => (
+  `t.deepEqual(state, ${curState});`
 );
 
 export const wrap = ({ assertions }) => (
