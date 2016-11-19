@@ -9,7 +9,7 @@ import CodeMirror from 'react-codemirror';
 const style = {
   display: 'flex',
   flexFlow: 'column nowrap',
-  height: 'calc(100% - 3.5em)'
+  height: '100%'
 };
 
 export const fromPath = (path) => (
