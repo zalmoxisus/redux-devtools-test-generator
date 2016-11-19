@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-test-generator",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Generate tests for redux devtools.",
   "main": "lib/index.js",
   "files": [
