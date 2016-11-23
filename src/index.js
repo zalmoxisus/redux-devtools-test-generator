@@ -4,7 +4,7 @@ import objectPath from 'object-path';
 import jsan from 'jsan';
 import diff from 'simple-diff';
 import es6template from 'es6template';
-import CodeMirror from 'react-codemirror';
+import { Editor } from 'remotedev-monitor-components';
 
 const style = {
   display: 'flex',
@@ -54,17 +54,6 @@ export function compare(s1, s2, cb, defaultValue) {
 }
 
 export default class TestGenerator extends Component {
-  constructor(props) {
-    super(props);
-    if (props.theme) this.options.theme = props.theme;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.theme && nextProps.theme !== this.options.theme) {
-      this.options.theme = nextProps.theme;
-    }
-  }
-
   getMethod(action) {
     let type = action.type;
     if (type[0] === '┗') type = type.substr(1).trim();
@@ -78,11 +67,6 @@ export default class TestGenerator extends Component {
     if (action.type === '@@INIT') return '{}';
     return stringify(action);
   }
-
-  options = {
-    mode: 'javascript',
-    lineNumbers: true
-  };
 
   generateTest() {
     const {
@@ -165,21 +149,10 @@ export default class TestGenerator extends Component {
     } else {
       const code = this.generateTest();
 
-      if (!this.props.useCodemirror) {
-        testComponent = (
-          <textarea
-            style={{ padding: '10px', width: '100%', height: '100%' }}
-            defaultValue={code}
-          />
-        );
-      } else {
-        testComponent = (
-          <CodeMirror
-            value={code}
-            options={this.options}
-          />
-        );
-      }
+      testComponent = (
+        <Editor value={code} theme={this.props.theme} />
+      );
+
       if (this.props.startActionId === null) {
         warning = (
           <div
@@ -220,7 +193,6 @@ TestGenerator.propTypes = {
     PropTypes.string
   ]),
   indentation: PropTypes.number,
-  useCodemirror: PropTypes.bool,
   theme: PropTypes.string,
   header: PropTypes.element,
   noTestWarning: PropTypes.element
