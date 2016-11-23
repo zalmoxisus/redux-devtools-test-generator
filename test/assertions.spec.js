@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { assertion } from '../src/vanilla/mocha';
 import { compare } from '../src';
 

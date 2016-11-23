@@ -149,9 +149,18 @@ export default class TestGenerator extends Component {
     } else {
       const code = this.generateTest();
 
-      testComponent = (
-        <Editor value={code} theme={this.props.theme} />
-      );
+      if (!this.props.useCodemirror) {
+        testComponent = (
+          <textarea
+            style={{ padding: '10px', width: '100%', height: '100%' }}
+            defaultValue={code}
+          />
+        );
+      } else {
+        testComponent = (
+          <Editor value={code} theme={this.props.theme} />
+        );
+      }
 
       if (this.props.startActionId === null) {
         warning = (
@@ -192,6 +201,7 @@ TestGenerator.propTypes = {
     PropTypes.func,
     PropTypes.string
   ]),
+  useCodemirror: PropTypes.bool,
   indentation: PropTypes.number,
   theme: PropTypes.string,
   header: PropTypes.element,
