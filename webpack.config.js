@@ -49,14 +49,27 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.jsx?$/,
-      loaders: ['babel-loader'],
+      loader: 'babel-loader',
       include: [
         path.join(__dirname, 'src'),
         path.join(__dirname, 'demo/src/js')
       ]
-    }]
+    },
+    {
+      test: /\.css$/,
+      use: [
+        { loader: 'style-loader' },
+        { loader: 'css-loader' }
+      ]
+    },
+    {
+      test: /\.(ttf|eot|svg|woff|woff2)$/,
+      loader: 'file-loader',
+      options: { outputPath: 'fonts/', publicPath: 'fonts/' }
+    }
+    ]
   },
   devServer: isProduction ? null : {
     quiet: false,

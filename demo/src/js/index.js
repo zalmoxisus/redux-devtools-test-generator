@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'remotedev-ui/lib/presets';
 import React from 'react';
 import { render } from 'react-dom';
 import DemoApp from './DemoApp';
