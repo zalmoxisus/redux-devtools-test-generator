@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, Component, PropTypes } from 'react';
 import stringify from 'javascript-stringify';
 import objectPath from 'object-path';
 import jsan from 'jsan';
@@ -47,7 +47,7 @@ export function compare(s1, s2, cb, defaultValue) {
     .forEach(generate);
 }
 
-export default class TestGenerator extends Component {
+export default class TestGenerator extends (PureComponent || Component) {
   getMethod(action) {
     let type = action.type;
     if (type[0] === '┗') type = type.substr(1).trim();
