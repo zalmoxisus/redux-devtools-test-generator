@@ -11,7 +11,7 @@ import createLogger from 'redux-logger';
 import { Router, Route, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 import { createDevTools, persistState } from 'redux-devtools';
-import DevtoolsInspector from 'redux-devtools-inspector';
+import DevtoolsInspector from 'remotedev-inspector-monitor';
 import DockMonitor from 'redux-devtools-dock-monitor';
 import getOptions from './getOptions';
 import TestGenerator from '../../../src';
