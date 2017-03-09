@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Toolbar, Container, Button, Select, Notification, Dialog } from 'remotedev-ui';
+import { formSchema, uiSchema, defaultFormData } from './templateForm';
 import AddIcon from 'react-icons/lib/md/add';
 import EditIcon from 'react-icons/lib/md/edit';
 import TestGenerator from './TestGenerator';
@@ -28,17 +29,46 @@ export default class TestTab extends Component {
     this.props.monitorState.testGenerator || {}
   );
 
-  onSelectTemplate = selectedTemplate => {
+  handleSelectTemplate = selectedTemplate => {
     const { templates = getDefaultTemplates() } = this.getPersistedState();
     this.updateState({ selected: templates.indexOf(selectedTemplate) });
   };
 
-  onCloseTip = () => {
+  handleCloseTip = () => {
     this.updateState({ hideTip: true });
   };
 
-  onCloseDialog = () => {
+  handleCloseDialog = () => {
     this.setState({ dialogStatus: null });
+  };
+
+  handleSubmit = ({ formData: template }) => {
+    const { templates = getDefaultTemplates(), selected = 0 } = this.getPersistedState();
+    if (this.state.dialogStatus === 'Add') {
+      this.updateState({
+        selected: templates.length,
+        templates: [...templates, template]
+      });
+    } else {
+      const editedTemplates = [...templates];
+      editedTemplates[selected] = template;
+      this.updateState({
+        templates: editedTemplates
+      });
+    }
+    this.handleCloseDialog();
+  };
+
+  handleRemove = () => {
+    const { templates = getDefaultTemplates(), selected = 0 } = this.getPersistedState();
+    this.updateState({
+      selected: 0,
+      templates: templates.length === 1 ? undefined : [
+        ...templates.slice(0, selected),
+        ...templates.slice(selected + 1)
+      ]
+    });
+    this.handleCloseDialog();
   };
 
   addTemplate = () => {
@@ -75,7 +105,7 @@ export default class TestTab extends Component {
             labelKey="name"
             value={name}
             simpleValue={false}
-            onChange={this.onSelectTemplate}
+            onChange={this.handleSelectTemplate}
           />
           <Button onClick={this.editTemplate}><EditIcon /></Button>
           <Button onClick={this.addTemplate}><AddIcon /></Button>
@@ -94,21 +124,25 @@ export default class TestTab extends Component {
           />
         }
         {!persistedState.hideTip && assertion && rest.startActionId === null &&
-          <Notification onClose={this.onCloseTip}>
+          <Notification onClose={this.handleCloseTip}>
             Hold <b>SHIFT</b> key to select more actions.
           </Notification>
         }
         {dialogStatus &&
           <Dialog
             open
-            onDismiss={this.onCloseDialog}
+            title={`${dialogStatus} test template`}
+            onDismiss={this.handleCloseDialog}
+            onSubmit={this.handleSubmit}
             actions={[
-              <Button key="cancel" onClick={this.onDismiss}>Cancel</Button>,
-              <Button key="remove" onClick={this.onRemove}>Remove</Button>,
-              <Button key="submit" primary onClick={this.onSubmit}>{dialogStatus}</Button>
+              <Button key="cancel" onClick={this.handleCloseDialog}>Cancel</Button>,
+              <Button key="remove" onClick={this.handleRemove}>Remove</Button>
             ]}
-          >
-          </Dialog>
+            submitText={dialogStatus}
+            schema={formSchema}
+            uiSchema={uiSchema}
+            formData={dialogStatus === 'Edit' ? template : defaultFormData}
+          />
         }
       </Container>
     );
