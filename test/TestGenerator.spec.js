@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'enzyme';
 import { renderToJson } from 'enzyme-to-json';
-import TestGenerator from '../src/';
+import TestGenerator from '../src/TestGenerator';
 import fnTemplate from '../src/redux/mocha';
 import strTemplate from '../src/redux/mocha/template';
 import fnVanillaTemplate from '../src/vanilla/mocha';
@@ -19,7 +19,7 @@ const computedStates = [
 
 describe('TestGenerator component', () => {
   it('should show warning message when no params provided', () => {
-    const component = render(<TestGenerator />);
+    const component = render(<TestGenerator useCodemirror={false} />);
     expect(renderToJson(component)).toMatchSnapshot();
   });
 
@@ -27,6 +27,7 @@ describe('TestGenerator component', () => {
     const component = render(
       <TestGenerator
         assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
+        useCodemirror={false}
       />
     );
     expect(renderToJson(component)).toMatchSnapshot();
@@ -37,6 +38,7 @@ describe('TestGenerator component', () => {
       <TestGenerator
         assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
+        useCodemirror={false}
       />
     );
     expect(renderToJson(component)).toMatchSnapshot();
@@ -46,7 +48,7 @@ describe('TestGenerator component', () => {
     const component = render(
       <TestGenerator
         assertion={strTemplate.assertion} dispatcher={strTemplate.dispatcher}
-        wrap={strTemplate.wrap}
+        wrap={strTemplate.wrap} useCodemirror={false}
         actions={actions} computedStates={computedStates} selectedActionId={1}
       />
     );
@@ -57,7 +59,7 @@ describe('TestGenerator component', () => {
     const component = render(
       <TestGenerator
         assertion={fnTemplate.assertion} dispatcher={fnTemplate.dispatcher} wrap={fnTemplate.wrap}
-        actions={actions} computedStates={computedStates}
+        actions={actions} computedStates={computedStates} useCodemirror={false}
       />
     );
     expect(renderToJson(component)).toMatchSnapshot();
@@ -69,7 +71,7 @@ describe('TestGenerator component', () => {
         assertion={fnVanillaTemplate.assertion} dispatcher={fnVanillaTemplate.dispatcher}
         wrap={fnVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
-        isVanilla name="SomeStore"
+        isVanilla name="SomeStore" useCodemirror={false}
       />
     );
     expect(renderToJson(component)).toMatchSnapshot();
@@ -81,7 +83,7 @@ describe('TestGenerator component', () => {
         assertion={strVanillaTemplate.assertion} dispatcher={strVanillaTemplate.dispatcher}
         wrap={strVanillaTemplate.wrap}
         actions={actions} computedStates={computedStates} selectedActionId={1}
-        isVanilla name="SomeStore"
+        isVanilla name="SomeStore" useCodemirror={false}
       />
     );
     expect(renderToJson(component)).toMatchSnapshot();
