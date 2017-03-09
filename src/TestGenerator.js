@@ -6,12 +6,6 @@ import diff from 'simple-diff';
 import es6template from 'es6template';
 import { Editor } from 'remotedev-ui';
 
-const style = {
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  height: '100%'
-};
-
 export const fromPath = (path) => (
   path
     .map(a => (
@@ -139,46 +133,18 @@ export default class TestGenerator extends Component {
   }
 
   render() {
-    let testComponent;
-    let warning;
-    if (!this.props.assertion) {
-      warning = (
-        this.props.noTestWarning ||
-          <div style={{ margin: '10px' }}>No template for tests specified.</div>
+    const code = this.generateTest();
+
+    if (!this.props.useCodemirror) {
+      return (
+        <textarea
+          style={{ padding: '10px', width: '100%', height: '100%' }}
+          defaultValue={code}
+        />
       );
-    } else {
-      const code = this.generateTest();
-
-      if (!this.props.useCodemirror) {
-        testComponent = (
-          <textarea
-            style={{ padding: '10px', width: '100%', height: '100%' }}
-            defaultValue={code}
-          />
-        );
-      } else {
-        testComponent = (
-          <Editor value={code} theme={this.props.theme} />
-        );
-      }
-
-      if (this.props.startActionId === null) {
-        warning = (
-          <div
-            style={{ padding: '10px', backgroundColor: '#247b98' }}
-          >Hold <b>SHIFT</b> key to select more actions.</div>
-        );
-      }
     }
 
-    const { header } = this.props;
-    return (
-      <div style={style}>
-        {header}
-        {testComponent}
-        {warning}
-      </div>
-    );
+    return <Editor value={code} />;
   }
 }
 
@@ -203,12 +169,11 @@ TestGenerator.propTypes = {
   ]),
   useCodemirror: PropTypes.bool,
   indentation: PropTypes.number,
-  theme: PropTypes.string,
-  header: PropTypes.element,
-  noTestWarning: PropTypes.element
+  header: PropTypes.element
 };
 
 TestGenerator.defaultProps = {
+  useCodemirror: true,
   selectedActionId: null,
   startActionId: null
 };
