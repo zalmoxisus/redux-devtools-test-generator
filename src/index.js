@@ -20,8 +20,16 @@ export const getDefaultTemplates = (/* lib */) => (
 );
 
 export default class TestTab extends Component {
+  updateState = state => {
+    this.props.dispatch(updateMonitorState(state));
+  };
+
   onSelectTemplate = selected => {
-    this.props.dispatch(updateMonitorState({ selected }));
+    this.updateState({ selected });
+  };
+
+  onCloseTip = () => {
+    this.updateState({ hideTestTip: true });
   };
 
   render() {
@@ -60,8 +68,8 @@ export default class TestTab extends Component {
             {...rest}
           />
         }
-        {assertion && rest.startActionId === null &&
-          <Notification>
+        {!monitorState.hideTestTip && assertion && rest.startActionId === null &&
+          <Notification onClose={this.onCloseTip}>
             Hold <b>SHIFT</b> key to select more actions.
           </Notification>
         }
