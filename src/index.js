@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Toolbar, Container, Button, Select, Notification, Dialog } from 'remotedev-ui';
 import AddIcon from 'react-icons/lib/md/add';
 import EditIcon from 'react-icons/lib/md/edit';
-import { updateMonitorState } from 'remotedev-inspector-monitor/lib/redux';
 import TestGenerator from './TestGenerator';
 import jestTemplate from './redux/jest/template';
 import mochaTemplate from './redux/mocha/template';
@@ -30,7 +29,7 @@ export default class TestTab extends Component {
   };
 
   onCloseTip = () => {
-    this.updateState({ hideTestTip: true });
+    this.updateState({ hideTip: true });
   };
 
   onCloseDialog = () => {
@@ -45,15 +44,21 @@ export default class TestTab extends Component {
     this.setState({ dialogStatus: 'Edit' });
   };
 
-  updateState = state => {
-    this.props.dispatch(updateMonitorState(state));
+  updateState = newState => {
+    this.props.updateMonitorState({
+      testGenerator: {
+        ...this.props.monitorState.testGenerator,
+        ...newState
+      }
+    });
   };
 
   render() {
-    const { monitorState, dispatch, ...rest } = this.props; // eslint-disable-line no-unused-vars
+    const { monitorState, updateMonitorState, ...rest } = this.props; // eslint-disable-line no-unused-vars, max-len
     const { dialogStatus } = this.state;
-    let { selected = 'Jest template' } = monitorState;
-    const templates = monitorState.templates || getDefaultTemplates();
+    const { testGenerator: persistedState = {} } = monitorState;
+    let { selected = 'Jest template' } = persistedState;
+    const templates = persistedState.templates || getDefaultTemplates();
     let template = templates.find(t => t.name === selected);
     if (!template) {
       template = templates[0]; selected = template.name;
@@ -86,7 +91,7 @@ export default class TestTab extends Component {
             {...rest}
           />
         }
-        {!monitorState.hideTestTip && assertion && rest.startActionId === null &&
+        {!persistedState.hideTip && assertion && rest.startActionId === null &&
           <Notification onClose={this.onCloseTip}>
             Hold <b>SHIFT</b> key to select more actions.
           </Notification>
@@ -110,13 +115,16 @@ export default class TestTab extends Component {
 
 TestTab.propTypes = {
   monitorState: PropTypes.shape({
-    templates: PropTypes.array,
-    selected: PropTypes.string
+    testGenerator: PropTypes.shape({
+      templates: PropTypes.array,
+      selected: PropTypes.string,
+      hideTip: PropTypes.bool
+    })
   }).isRequired,
   /*
   options: PropTypes.shape({
     lib: PropTypes.string
   }).isRequired,
   */
-  dispatch: PropTypes.func.isRequired
+  updateMonitorState: PropTypes.func.isRequired
 };
