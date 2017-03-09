@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Toolbar, Container, Button, Select, Notification } from 'remotedev-ui';
+import { Toolbar, Container, Button, Select, Notification, Dialog } from 'remotedev-ui';
 import AddIcon from 'react-icons/lib/md/add';
 import EditIcon from 'react-icons/lib/md/edit';
 import { updateMonitorState } from 'remotedev-inspector-monitor/lib/redux';
@@ -20,9 +20,10 @@ export const getDefaultTemplates = (/* lib */) => (
 );
 
 export default class TestTab extends Component {
-  updateState = state => {
-    this.props.dispatch(updateMonitorState(state));
-  };
+  constructor(props) {
+    super(props);
+    this.state = { dialogStatus: null };
+  }
 
   onSelectTemplate = selected => {
     this.updateState({ selected });
@@ -32,8 +33,25 @@ export default class TestTab extends Component {
     this.updateState({ hideTestTip: true });
   };
 
+  onCloseDialog = () => {
+    this.setState({ dialogStatus: null });
+  };
+
+  addTemplate = () => {
+    this.setState({ dialogStatus: 'Add' });
+  };
+
+  editTemplate = () => {
+    this.setState({ dialogStatus: 'Edit' });
+  };
+
+  updateState = state => {
+    this.props.dispatch(updateMonitorState(state));
+  };
+
   render() {
     const { monitorState, dispatch, ...rest } = this.props; // eslint-disable-line no-unused-vars
+    const { dialogStatus } = this.state;
     let { selected = 'Jest template' } = monitorState;
     const templates = monitorState.templates || getDefaultTemplates();
     let template = templates.find(t => t.name === selected);
@@ -52,8 +70,8 @@ export default class TestTab extends Component {
             value={selected}
             onChange={this.onSelectTemplate}
           />
-          <Button><EditIcon /></Button>
-          <Button><AddIcon /></Button>
+          <Button onClick={this.editTemplate}><EditIcon /></Button>
+          <Button onClick={this.addTemplate}><AddIcon /></Button>
         </Toolbar>
         {!assertion ?
           <Notification>
@@ -72,6 +90,18 @@ export default class TestTab extends Component {
           <Notification onClose={this.onCloseTip}>
             Hold <b>SHIFT</b> key to select more actions.
           </Notification>
+        }
+        {dialogStatus &&
+          <Dialog
+            open
+            onDismiss={this.onCloseDialog}
+            actions={[
+              <Button key="cancel" onClick={this.onDismiss}>Cancel</Button>,
+              <Button key="remove" onClick={this.onRemove}>Remove</Button>,
+              <Button key="submit" primary onClick={this.onSubmit}>{dialogStatus}</Button>
+            ]}
+          >
+          </Dialog>
         }
       </Container>
     );
