@@ -24,8 +24,13 @@ export default class TestTab extends Component {
     this.state = { dialogStatus: null };
   }
 
-  onSelectTemplate = selected => {
-    this.updateState({ selected });
+  getPersistedState = () => (
+    this.props.monitorState.testGenerator || {}
+  );
+
+  onSelectTemplate = selectedTemplate => {
+    const { templates = getDefaultTemplates() } = this.getPersistedState();
+    this.updateState({ selected: templates.indexOf(selectedTemplate) });
   };
 
   onCloseTip = () => {
@@ -56,14 +61,10 @@ export default class TestTab extends Component {
   render() {
     const { monitorState, updateMonitorState, ...rest } = this.props; // eslint-disable-line no-unused-vars, max-len
     const { dialogStatus } = this.state;
-    const { testGenerator: persistedState = {} } = monitorState;
-    let { selected = 'Jest template' } = persistedState;
-    const templates = persistedState.templates || getDefaultTemplates();
-    let template = templates.find(t => t.name === selected);
-    if (!template) {
-      template = templates[0]; selected = template.name;
-    }
-    const { assertion, dispatcher, wrap } = template;
+    const persistedState = this.getPersistedState();
+    const { selected = 0, templates = getDefaultTemplates() } = persistedState;
+    const template = templates[selected];
+    const { name, assertion, dispatcher, wrap } = template;
 
     return (
       <Container>
@@ -72,7 +73,8 @@ export default class TestTab extends Component {
             options={templates}
             valueKey="name"
             labelKey="name"
-            value={selected}
+            value={name}
+            simpleValue={false}
             onChange={this.onSelectTemplate}
           />
           <Button onClick={this.editTemplate}><EditIcon /></Button>
@@ -117,7 +119,7 @@ TestTab.propTypes = {
   monitorState: PropTypes.shape({
     testGenerator: PropTypes.shape({
       templates: PropTypes.array,
-      selected: PropTypes.string,
+      selected: PropTypes.number,
       hideTip: PropTypes.bool
     })
   }).isRequired,

@@ -8,7 +8,8 @@
   "rules": {
     "prefer-template": 0,
     "no-shadow": 0,
-    "comma-dangle": 0
+    "comma-dangle": 0,
+    "react/sort-comp": 0
   },
   "parser": "babel-eslint",
   "plugins": [
