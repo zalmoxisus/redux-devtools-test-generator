@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { updateMonitorState } from 'remotedev-inspector-monitor/lib/redux';
 import TestGenerator from './TestGenerator';
 import jestTemplate from './redux/jest/template';
 import mochaTemplate from './redux/mocha/template';
@@ -16,10 +17,18 @@ export const getDefaultTemplates = (/* lib */) => (
 );
 
 export default class TestTab extends Component {
+  onSelectTemplate = selected => {
+    this.props.dispatch(updateMonitorState({ selected }));
+  };
+
   render() {
-    const { selected = 0 } = this.props;
-    const templates = this.props.templates || getDefaultTemplates();
-    const template = templates[selected];
+    const { monitorState, dispatch, ...rest } = this.props; // eslint-disable-line no-unused-vars
+    let { selected = 'Jest template' } = monitorState;
+    const templates = monitorState.templates || getDefaultTemplates();
+    let template = templates.find(t => t.name === selected);
+    if (!template) {
+      template = templates[0]; selected = template.name;
+    }
     const { assertion, dispatcher, wrap } = template;
 
     return (
@@ -34,6 +43,14 @@ export default class TestTab extends Component {
 }
 
 TestTab.propTypes = {
-  templates: PropTypes.array,
-  selected: PropTypes.number,
+  monitorState: PropTypes.shape({
+    templates: PropTypes.array,
+    selected: PropTypes.string
+  }).isRequired,
+  /*
+  options: PropTypes.shape({
+    lib: PropTypes.string
+  }).isRequired,
+  */
+  dispatch: PropTypes.func.isRequired
 };
