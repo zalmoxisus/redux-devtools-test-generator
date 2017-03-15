@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import pkg from '../../../package.json';
-import { Button, Toolbar, Spacer } from 'remotedev-ui';
+import { Button, Toolbar, Spacer } from 'devui';
 import getOptions from './getOptions';
 import { push as pushRoute } from 'react-router-redux';
 

@@ -1,8 +1,8 @@
 import 'babel-polyfill';
-import 'remotedev-ui/lib/presets';
+import 'devui/lib/presets';
 import React from 'react';
 import { render } from 'react-dom';
-import { Container } from 'remotedev-ui';
+import { Container } from 'devui';
 import DemoApp from './DemoApp';
 import { Provider } from 'react-redux';
 import reducers from './reducers';

@@ -4,7 +4,7 @@ import objectPath from 'object-path';
 import jsan from 'jsan';
 import diff from 'simple-diff';
 import es6template from 'es6template';
-import { Editor } from 'remotedev-ui';
+import { Editor } from 'devui';
 
 export const fromPath = (path) => (
   path
