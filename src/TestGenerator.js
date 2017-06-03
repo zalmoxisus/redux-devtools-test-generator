@@ -1,4 +1,5 @@
-import React, { PureComponent, Component, PropTypes } from 'react';
+import React, { PureComponent, Component } from 'react';
+import PropTypes from 'prop-types';
 import stringify from 'javascript-stringify';
 import objectPath from 'object-path';
 import jsan from 'jsan';

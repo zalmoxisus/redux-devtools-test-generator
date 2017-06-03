@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Toolbar, Container, Button, Select, Notification, Dialog } from 'devui';
 import { formSchema, uiSchema, defaultFormData } from './templateForm';
 import AddIcon from 'react-icons/lib/md/add';
